@@ -555,11 +555,76 @@ for _ in 0..NTHREADS {
               <ul>
                 <li>You can't touch the string without acquiring the Mutex</li>
                 <li>You don't have to use a mutex if you don't mutate the data</li>
+                <li>Fearless concurrency made people create threaded tools</li>
               </ul>
             </aside>
           </section>
+        </section>
 
+        <section>
+          <h2>No dangling pointers</h2>
 
+          <pre>
+            <code data-trim class="rust">
+let maybe_message: Option<&String>;
+
+{
+    let message = String::from("I am groot");
+    maybe_message = Some(&message);
+}
+
+println!("{:?}", maybe_message);
+            </code>
+          </pre>
+        </section>
+
+        <section>
+          <h2>No use of invalid resources</h2>
+
+          <pre>
+            <code data-trim class="rust">
+let mut f = fs::File::create("sup")?;
+drop(f);
+f.write_all(b"hi!")?;
+            </code>
+          </pre>
+
+          <aside class="notes">
+            We can't close the file if there's a pointer to it somewhere
+          </aside>
+        </section>
+
+        <section>
+          <h2>No mutation of borrowed resources</h2>
+
+          <pre>
+            <code data-trim class="rust">
+let mut numbers = vec![1,2,3,4,5,6];
+
+for (index, num) in numbers.iter().enumerate() {
+    if *num < 4 {
+        numbers.remove(index);
+    }
+}
+            </code>
+          </pre>
+
+          <aside class="notes">
+            None of this is hard-coded
+          </aside>
+        </section>
+
+        <section>
+          <pre>
+            <code data-trim class="rust">
+let mut numbers = vec![1,2,3,4,5,6];
+numbers.retain(|num| *num >= 4);
+            </code>
+          </pre>
+        </section>
+
+        <section>
+          <h1>Questions?</h1>
         </section>
 	  </div>
 	</div>
