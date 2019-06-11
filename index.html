@@ -373,6 +373,186 @@ warning: unused `std::result::Result` that must be used
             </ul>
           </aside>
         </section>
+
+        <section>
+          <section data-transition="fade-out">
+            <h2>Threads are awesome</h2>
+
+            <pre>
+              <code data-trim class="python">
+import threading
+
+_COUNTER = 0
+
+def thread_function():
+    global _COUNTER
+
+    RAX = _COUNTER
+    RAX = RAX + 1
+    _COUNTER = RAX
+
+
+if __name__ == "__main__":
+
+    threads = [threading.Thread(target=thread_function)
+               for _ in range(100)]
+
+    for t in threads:
+        t.start()
+
+    for t in threads:
+        t.join()
+
+    print()
+    print(_COUNTER)
+              </code>
+            </pre>
+
+            <aside class="notes">
+              This works by accident and doesn't run in parallel
+            </aside>
+          </section>
+
+          <section data-transition="fade-in fade-out">
+            <h2>Threads awesome are</h2>
+
+            <pre>
+              <code data-trim class="python">
+import threading
+
+_COUNTER = 0
+
+def thread_function():
+    global _COUNTER
+
+    print(".", end="", flush=True)
+    RAX = _COUNTER
+    print(".", end="", flush=True)
+    RAX = RAX + 1
+    print(".", end="", flush=True)
+    _COUNTER = RAX
+
+
+if __name__ == "__main__":
+
+    threads = [threading.Thread(target=thread_function)
+               for _ in range(100)]
+
+    for t in threads:
+        t.start()
+
+    for t in threads:
+        t.join()
+
+    print()
+    print(_COUNTER)
+              </code>
+            </pre>
+          </section>
+
+          <section data-transition="fade-in fade-out">
+            <h2>T̨̕h͏r͞҉e̡͜a͡d͢s̶ ̴͡a̕͏̢w͠e͠s͏o̴m̵͟e̕͡ ̸͏a͜r҉͘͞e̕͞</h2>
+
+            <pre>
+              <code data-trim class="python">
+import threading
+
+_COUNTER = 0
+_LOCK = threading.Lock()
+
+def thread_function():
+    global _COUNTER
+
+    with _LOCK:
+        print(".", end="", flush=True)
+        RAX = _COUNTER
+    print(".", end="", flush=True)
+    RAX = RAX + 1
+    print(".", end="", flush=True)
+    _COUNTER = RAX
+
+              </code>
+            </pre>
+
+            <aside class="notes">
+              This works by accident and doesn't run in parallel
+            </aside>
+          </section>
+
+          <section>
+            <h2>You shall not pass!</h2>
+
+            <pre>
+              <code data-trim class="rust">
+let mut threads = vec![];
+let mut counter = 0;
+
+for _ in 0..NTHREADS {
+    threads.push(thread::spawn(|| {
+        counter += 1;
+    }));
+}
+              </code>
+            </pre>
+          </section>
+
+          <section>
+            <h2>You shall not pass!</h2>
+
+            <pre>
+              <code data-trim class="nohighlight">
+error[E0499]: cannot borrow `counter` as mutable more than once at a time
+  --> src/main.rs:12:36
+   |
+12 |           threads.push(thread::spawn(|| {
+   |                        -             ^^ mutable borrow starts here in previous iteration of loop
+   |  ______________________|
+   | |
+13 | |             counter += 1;
+   | |             ------- borrows occur due to use of `counter` in closure
+14 | |         }));
+   | |__________- argument requires that `counter` is borrowed for `'static`
+              </code>
+            </pre>
+          </section>
+
+          <section>
+            Rust has atomic types
+            <pre>
+              <code data-trim class="rust">
+let mut threads = vec![];
+let counter = Arc::new(AtomicU32::new(0));
+
+for _ in 0..NTHREADS {
+    let counter = counter.clone();
+    threads.push(thread::spawn(move || {
+        counter.fetch_add(1, Ordering::SeqCst);
+    }));
+}
+              </code>
+            </pre>
+          </section>
+
+          <section>
+            And a mutex
+            <pre>
+              <code data-trim class="rust">
+let mut threads = vec![];
+let message_mutex = Arc::new(Mutex::new(String::from("It's over 9000")));
+
+for _ in 0..NTHREADS {
+    let message_mutex = message_mutex.clone();
+    threads.push(thread::spawn(move || {
+        let mut message = message_mutex.lock().unwrap();
+        message.push('!');
+    }));
+}
+              </code>
+            </pre>
+          </section>
+
+
+        </section>
 	  </div>
 	</div>
 
