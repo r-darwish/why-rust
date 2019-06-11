@@ -26,6 +26,348 @@
 	  <div class="slides">
 		<section>
           <h1>Why Rust</h1>
+          <aside class="notes">
+            The purpose of this presentation
+          </aside>
+        </section>
+        <section>
+          <h2>What is Rust?</h2>
+          <aside class="notes">
+            <ul>
+              <li>Programming language made by Mozilla</li>
+              <li>Compiles to native assembly like C++</li>
+              <li>Performance similar to C++</li>
+              <li>Procedural language</li>
+            </ul>
+          </aside>
+        </section>
+        <section>
+          <img src="example.png"/>
+          <aside class="notes">
+            If it look like C++, why should we invest time in it?
+          </aside>
+        </section>
+        <section>
+          <h3>Rust is type safe</h3>
+
+          Python
+          <pre>
+            <code data-trim class="python">
+def f2c(fahreheit):
+    return (fahreheit - 32) / 5 * 9
+            </code>
+          </pre>
+
+          Rust
+          <pre>
+            <code data-trim class="Rust">
+fn f2c(fahrenheit: f64) -> f64 {
+    (fahrenheit - 32.0) * 5.0 / 9.0
+}
+            </code>
+          </pre>
+        </section>
+
+        <section>
+          <h3>Rust is really type safe</h3>
+
+          C
+          <pre>
+            <code data-trim class="C">
+ssize_t write(int fd, const void *buf, size_t count);
+            </code>
+          </pre>
+
+          Rust
+          <pre>
+            <code data-trim class="Rust">
+fn write(&mut self, buf: &[u8]) -> Result&lt;usize&gt;
+            </code>
+          </pre>
+
+          <aside class="notes">
+            <ul>
+              <li>Error value is magic in the return code</li>
+              <li>Buffer is void pointer</li>
+              <li>fd is int</li>
+            </ul>
+          </aside>
+        </section>
+
+        <section>
+          <h3>Rust is really really type safe</h3>
+
+          Java
+          <pre>
+            <code data-trim class="Java">
+public static Path createFile(Path path,
+                              FileAttribute&lt;?&gt;... attrs)
+                       throws IOException
+            </code>
+          </pre>
+
+          Rust
+          <pre>
+            <code data-trim class="Rust">
+pub fn create&lt;P: AsRef&lt;Path&gt;&gt;(path: P) -&gt; Result&lt;File&gt;
+            </code>
+          </pre>
+
+          <aside class="notes">
+            You cannot specify a null path in Rust
+          </aside>
+        </section>
+
+        <section>
+          <h3>Rust is really really type safe</h3>
+
+          <ul>
+            <li>No magical values like -1</li>
+            <li>No null value</li>
+            <li>Enums aren't integers</li>
+            <li>No use of primitives for OS resources (Handle / File Descriptor)</li>
+          </ul>
+        </section>
+
+        <section>
+          If you want to go even further beoynd
+
+          <pre>
+            <code data-trim class="rust">
+#[macro_use]
+extern crate derive_more;
+
+#[derive(Add, Sub, Copy, Clone)]
+struct Years(i64);
+
+#[derive(Add, Sub, Copy, Clone)]
+struct Days(i64);
+
+fn main() {
+    let age = Years(5);
+    let uptime = Days(1);
+
+    uptime + uptime; // Ok
+    uptime + age; // Compilation Error
+    uptime / uptime; // Compilation Error
+}
+
+            </code>
+          </pre>
+
+          <small>How do you say "הגדלת ראש" in English? 🤔</small>
+        </section>
+
+        <section>
+          But what if something needs to be nullable
+
+          <pre>
+            <code data-trim class="rust">
+fn welcome(name: Option&lt;&amp;str&gt;) {
+    let name = match name {
+        Some(name) =&gt; name,
+        None =&gt; &quot;John Doe&quot;
+    };
+
+    println!(&quot;Welcome {}&quot;, name)
+
+}
+
+fn better_welcome(name: Option&lt;&amp;str&gt;) {
+    println!(&quot;Welcome {}&quot;, name.unwrap_or(&quot;John Doe&quot;))
+
+}
+
+fn main() {
+    welcome(Some(&quot;Darwish&quot;));
+    welcome(None)
+}
+            </code>
+          </pre>
+        </section>
+
+        <section>
+          As I said, no magic values
+
+          <pre>
+            <code data-trim class="rust">
+pub fn find&lt;&#x27;a, P&gt;(&amp;&#x27;a self, pat: P) -&gt; Option&lt;usize&gt;
+
+pub fn create&lt;P: AsRef&lt;Path&gt;&gt;(path: P) -&gt; Result&lt;File&gt;
+            </code>
+          </pre>
+
+          <aside class="notes">
+            <ul>
+              <li>Note that usize is unsigned</li>
+              <li>No modern language uses magic for files, but every language I checked use -1 for string finding.</li>
+            </ul>
+          </aside>
+
+        </section>
+
+        <section>
+          Result isn't a tuple like in Go
+
+          <pre>
+            <code data-trim class="go">
+file, err := os.Open("file.go") // For read access.
+if err != nil {
+	log.Fatal(err)
+
+    // Oops I forgot to return 😭
+}
+
+data := make([]byte, 100)
+count, err := file.Read(data)
+            </code>
+          </pre>
+
+          <pre>
+            <code data-trim class="Rust">
+let mut f = fs::File::create("name")?;
+f.write_all(b"Hello")?;
+println!("File written 👏");
+            </code>
+          </pre>
+
+          <aside class="notes">
+            The code will not compile if I forget the first question mark.
+          </aside>
+        </section>
+
+        <section>
+          But what if I forget the second question mark?
+
+          <pre>
+            <code data-trim class="Rust">
+let mut f = fs::File::create("name")?;
+f.write_all(b"Hello");
+println!("File written 👏");
+            </code>
+          </pre>
+
+          <pre class="fragment">
+            <code data-trim class="nohighlight">
+warning: unused `std::result::Result` that must be used
+ --> src/main.rs:6:5
+  |
+6 |     f.write_all(b"Hello");
+  |     ^^^^^^^^^^^^^^^^^^^^^^
+  |
+  = note: #[warn(unused_must_use)] on by default
+  = note: this `Result` may be an `Err` variant, which should be handled
+            </code>
+          </pre>
+
+          <aside class="notes">
+            You can't forget about error handling and you know what can fail
+          </aside>
+        </section>
+
+        <section>
+          Not just a language, but an entire toolchain
+          <table>
+            <thead>
+              <tr>
+                <th>Tool</th>
+                <th>C++</th>
+                <th>Python</th>
+                <th>Rust</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>compiler</td>
+                <td>Clang, MSVC, GCC</td>
+                <td>CPython, PyPy, Jython</td>
+                <td>rustc, gcc-rust</td>
+              </tr>
+              <tr>
+                <td>Package Manager</td>
+                <td>Conan, Hunter, vcpkg</td>
+                <td>pip, setuptools</td>
+                <td>Cargo</td>
+              </tr>
+              <tr>
+                <td>Build system</td>
+                <td>Automake, CMake, Scons, VS</td>
+                <td>setuptools, pbr, poetry, buildout</td>
+                <td>Cargo</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <aside class="notes">
+            <ul>
+              <li>pip is a disaster</li>
+              <li>Conan is the best we found for C++, but life is tough</li>
+              <li>Every build system for C++ is a different language</li>
+            </ul>
+          </aside>
+        </section>
+
+        <section>
+          Not just a language, but an entire toolchain
+          <table>
+            <thead>
+              <tr>
+                <th>Tool</th>
+                <th>C++</th>
+                <th>Python</th>
+                <th>Rust</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Code formatter</td>
+                <td>--</td>
+                <td>Black, isort</td>
+                <td>rustfmt</td>
+              </tr>
+              <tr>
+                <td>Linter</td>
+                <td>clang-tidy</td>
+                <td>flake8, pylint, pyflakes, mypy</td>
+                <td>Clippy</td>
+              </tr>
+              <tr>
+                <td>Testing</td>
+                <td>Catch, gtest</td>
+                <td>pytest, slash</td>
+                <td>built in</td>
+              </tr>
+            </tbody>
+
+            <aside class="notes">
+              <ul>
+                <li>You have to make black not fight with isort if you want both</li>
+                <li>UT can access private members</li>
+              </ul>
+            </aside>
+          </table>
+        </section>
+
+        <section>
+          <h2>OS Support</h2>
+          Windows, Linux and macOS are all tier 1<br/><br/>
+
+          Yes, all the toolchain works in Windows
+        </section>
+
+        <section>
+          <h2>Batteries included</h2>
+          And they aren't corroded!
+
+          <aside class="notes">
+            <ul>
+              <li>Python's built in library is full of deprecated modules</li>
+              <li>Rust focuses on the toolchain and have a small standard library</li>
+              <li>C's standard library is a mess</li>
+              <li>C++ standard library is a bit better but only recently started handling files</li>
+              <li>Rust took better 3rd party implementations of the Mutex and the hash table</li>
+            </ul>
+          </aside>
         </section>
 	  </div>
 	</div>
