@@ -37,6 +37,7 @@
               <li>Programming language made by Mozilla</li>
               <li>Compiles to native assembly like C++</li>
               <li>Performance similar to C++</li>
+              <li>No GC</li>
               <li>Procedural language</li>
             </ul>
           </aside>
@@ -549,6 +550,13 @@ for _ in 0..NTHREADS {
 }
               </code>
             </pre>
+
+            <aside class="notes">
+              <ul>
+                <li>You can't touch the string without acquiring the Mutex</li>
+                <li>You don't have to use a mutex if you don't mutate the data</li>
+              </ul>
+            </aside>
           </section>
 
 
