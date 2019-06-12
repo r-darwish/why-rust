@@ -39,13 +39,9 @@
               <li>Performance similar to C++</li>
               <li>No GC</li>
               <li>Procedural language</li>
+              <li>Looks a bit like C++</li>
+              <li>Why should we invest time in learning it?</li>
             </ul>
-          </aside>
-        </section>
-        <section>
-          <img src="example.png"/>
-          <aside class="notes">
-            If it look like C++, why should we invest time in it?
           </aside>
         </section>
         <section>
@@ -132,13 +128,10 @@ pub fn create&lt;P: AsRef&lt;Path&gt;&gt;(path: P) -&gt; Result&lt;File&gt;
           </section>
 
           <section>
-            If you want to go even further beoynd
+            If you want to go even further beyond
 
             <pre>
               <code data-trim class="rust">
-#[macro_use]
-extern crate derive_more;
-
 #[derive(Add, Sub, Copy, Clone)]
 struct Years(i64);
 
@@ -165,19 +158,36 @@ fn main() {
 
             <pre>
               <code data-trim class="rust">
-fn welcome(name: Option&lt;&amp;str&gt;) {
-    let name = match name {
-        Some(name) =&gt; name,
-        None =&gt; &quot;John Doe&quot;
-    };
+fn welcome(maybe_name: Option&lt;&amp;str&gt;) {
+    let mut real_name = &quot;John Doe&quot;;
 
-    println!(&quot;Welcome {}&quot;, name)
+    if let Some(name) = maybe_name {
+        real_name = name;
+    }
 
+    println!(&quot;Welcome {}&quot;, real_name);
 }
 
-fn better_welcome(name: Option&lt;&amp;str&gt;) {
-    println!(&quot;Welcome {}&quot;, name.unwrap_or(&quot;John Doe&quot;))
+fn main() {
+    welcome(Some(&quot;Darwish&quot;));
+    welcome(None);
+}
+              </code>
+            </pre>
 
+            <aside class="notes">
+              Types are automatically inferred in Rust, like auto in C++. This isn't dynamic typing.
+            </aside>
+          </section>
+
+          <section>
+            The Rust way
+
+            <pre>
+              <code data-trim class="rust">
+fn welcome(maybe_name: Option&lt;&amp;str&gt;) {
+    let real_name = maybe_name.unwrap_or(&quot;John Doe&quot;);
+    println!(&quot;Welcome {}&quot;, real_name)
 }
 
 fn main() {
@@ -193,9 +203,9 @@ fn main() {
 
             <pre>
               <code data-trim class="rust">
-pub fn find&lt;&#x27;a, P&gt;(&amp;&#x27;a self, pat: P) -&gt; Option&lt;usize&gt;
+pub fn find(&amp;self, pat: &amp;Pattern) -&gt; Option&lt;usize&gt;
 
-pub fn create&lt;P: AsRef&lt;Path&gt;&gt;(path: P) -&gt; Result&lt;File&gt;
+pub fn create(path: &amp;Path) -&gt; Result&lt;File&gt;
               </code>
             </pre>
 
@@ -215,8 +225,7 @@ pub fn create&lt;P: AsRef&lt;Path&gt;&gt;(path: P) -&gt; Result&lt;File&gt;
               <code data-trim class="go">
 file, err := os.Open("file.go") // For read access.
 if err != nil {
-	log.Fatal(err)
-
+    log.Fatal(err);
     // Oops I forgot to return 😭
 }
 
@@ -227,8 +236,8 @@ count, err := file.Read(data)
 
             <pre>
               <code data-trim class="Rust">
-let mut f = fs::File::create("name")?;
-f.write_all(b"Hello")?;
+let mut f = File::create("name")?;
+f.write(b"Hello")?;
 println!("File written 👏");
               </code>
             </pre>
@@ -243,8 +252,8 @@ println!("File written 👏");
 
             <pre>
               <code data-trim class="Rust">
-let mut f = fs::File::create("name")?;
-f.write_all(b"Hello");
+let mut f = File::create("name")?;
+f.write(b"Hello");
 println!("File written 👏");
               </code>
             </pre>
@@ -271,7 +280,7 @@ warning: unused `std::result::Result` that must be used
         <section>
           <section>
             Not just a language, but an entire toolchain
-            <table>
+            <table class="fragment">
               <thead>
                 <tr>
                   <th>Tool</th>
@@ -351,6 +360,22 @@ warning: unused `std::result::Result` that must be used
               </aside>
             </table>
           </section>
+
+          <section>
+            <img src="documentation.png">
+          </section>
+
+          <section>
+            <img src="inside_source.png">
+          </section>
+
+          <section>
+            And there's rustup
+
+            <aside class="notes">
+              It's really hard to get the latest version of a language on every platform
+            </aside>
+          </section>
         </section>
 
         <section>
@@ -358,6 +383,10 @@ warning: unused `std::result::Result` that must be used
           Windows, Linux and macOS are all tier 1<br/><br/>
 
           Yes, all the toolchain works in Windows
+
+          <aside class="notes">
+            There are tiers 2 and 3
+          </aside>
         </section>
 
         <section>
@@ -376,6 +405,10 @@ warning: unused `std::result::Result` that must be used
         </section>
 
         <section>
+          <section>
+            <h2>Threads are (not) evil</h2>
+          </section>
+
           <section data-transition="fade-out">
             <h2>Threads are awesome</h2>
 
@@ -474,15 +507,9 @@ def thread_function():
 
               </code>
             </pre>
-
-            <aside class="notes">
-              This works by accident and doesn't run in parallel
-            </aside>
           </section>
 
           <section>
-            <h2>You shall not pass!</h2>
-
             <pre>
               <code data-trim class="rust">
 let mut threads = vec![];
@@ -621,6 +648,21 @@ let mut numbers = vec![1,2,3,4,5,6];
 numbers.retain(|num| *num >= 4);
             </code>
           </pre>
+        </section>
+
+        <section>
+          <h2>Rust gives you</h2>
+          <ul>
+            <li class="fragment">Real type safetly with no magic values</li>
+            <li class="fragment">No garbage collector and no resource leaking</li>
+            <li class="fragment">No race conditions and no magical giant lock</li>
+            <li class="fragment">A complete toolchain supported in Linux, Windows and macOS</li>
+            <li class="fragment">Lots of other cool features that I did not have time to speak about</li>
+          </ul>
+
+          <aside class="notes">
+            Every language has cool features. I though that it's better to first explain how Rust helps you avoid mistakes
+          </aside>
         </section>
 
         <section>
