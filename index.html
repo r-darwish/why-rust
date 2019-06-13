@@ -250,7 +250,7 @@ println!("File written 👏");
             </code></pre>
 
             <pre class="fragment">
-              <code data-trim class="nohighlight">
+              <code data-trim class="nohighlight" style="font-size: 13px">
 warning: unused `std::result::Result` that must be used
  --> src/main.rs:6:5
   |
@@ -414,20 +414,8 @@ def thread_function():
     RAX = RAX + 1
     _COUNTER = RAX
 
+# Run 100 threads, wait and print _COUNTER
 
-if __name__ == "__main__":
-
-    threads = [threading.Thread(target=thread_function)
-               for _ in range(100)]
-
-    for t in threads:
-        t.start()
-
-    for t in threads:
-        t.join()
-
-    print()
-    print(_COUNTER)
             </code></pre>
 
             <aside class="notes">
@@ -453,29 +441,14 @@ def thread_function():
     print(".", end="", flush=True)
     _COUNTER = RAX
 
-
-if __name__ == "__main__":
-
-    threads = [threading.Thread(target=thread_function)
-               for _ in range(100)]
-
-    for t in threads:
-        t.start()
-
-    for t in threads:
-        t.join()
-
-    print()
-    print(_COUNTER)
+# Run 100 threads, wait and print _COUNTER
             </code></pre>
           </section>
 
           <section data-transition="fade-in fade-out">
             <h2>T̨̕h͏r͞҉e̡͜a͡d͢s̶ ̴͡a̕͏̢w͠e͠s͏o̴m̵͟e̕͡ ̸͏a͜r҉͘͞e̕͞</h2>
 
-            <pre><code data-trim class="python">
-import threading
-
+            <pre><code data-trim class="python" style="font-size:15px">
 _COUNTER = 0
 _LOCK = threading.Lock()
 
@@ -490,6 +463,7 @@ def thread_function():
     print(".", end="", flush=True)
     _COUNTER = RAX
 
+# Run 100 threads, wait and print _COUNTER
             </code></pre>
           </section>
 
@@ -500,6 +474,7 @@ let mut counter = 0;
 
 for _ in 0..NTHREADS {
     threads.push(thread::spawn(|| {
+        // Thread body
         counter += 1;
     }));
 }
@@ -509,7 +484,7 @@ for _ in 0..NTHREADS {
           <section>
             <h2>You shall not pass!</h2>
 
-            <pre><code data-trim class="nohighlight">
+            <pre><code data-trim class="nohighlight" style="font-size: 13px">
 error[E0499]: cannot borrow `counter` as mutable more than once at a time
   --> src/main.rs:12:36
    |
@@ -532,7 +507,9 @@ let counter = Arc::new(AtomicU32::new(0));
 
 for _ in 0..NTHREADS {
     let counter = counter.clone();
+
     threads.push(thread::spawn(move || {
+        // Thread body
         counter.fetch_add(1, Ordering::SeqCst);
     }));
 }
@@ -543,11 +520,16 @@ for _ in 0..NTHREADS {
             And a mutex
             <pre><code data-trim class="rust">
 let mut threads = vec![];
-let message_mutex = Arc::new(Mutex::new(String::from("It's over 9000")));
+
+let message_mutex = Arc::new(
+    Mutex::new(String::from("It's over 9000"))
+);
 
 for _ in 0..NTHREADS {
     let message_mutex = message_mutex.clone();
+
     threads.push(thread::spawn(move || {
+        // Thread body
         let mut message = message_mutex.lock().unwrap();
         message.push('!');
     }));
@@ -606,16 +588,17 @@ for (index, num) in numbers.iter().enumerate() {
 }
           </code></pre>
 
+          <span class="fragment">
+            This is how we should do it
+            <pre><code data-trim class="rust">
+let mut numbers = vec![1,2,3,4,5,6];
+numbers.retain(|num| *num >= 4);
+            </code></pre>
+          </span>
+
           <aside class="notes">
             None of this is hard-coded
           </aside>
-        </section>
-
-        <section>
-          <pre><code data-trim class="rust">
-let mut numbers = vec![1,2,3,4,5,6];
-numbers.retain(|num| *num >= 4);
-          </code></pre>
         </section>
 
         <section>
