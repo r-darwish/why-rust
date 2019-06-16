@@ -116,30 +116,6 @@ pub fn create(path: &amp;Path) -&gt; Result&lt;File&gt;
           </section>
 
           <section>
-            If you want to go even further beyond
-
-            <pre><code data-trim class="rust">
-#[derive(Add, Sub, Copy, Clone)]
-struct Years(i64);
-
-#[derive(Add, Sub, Copy, Clone)]
-struct Days(i64);
-
-fn main() {
-    let age = Years(5);
-    let uptime = Days(1);
-
-    uptime + uptime; // Ok
-    uptime + age; // Compilation Error
-    uptime / uptime; // Compilation Error
-}
-
-            </code></pre>
-
-            <small>How do you say "הגדלת ראש" in English? 🤔</small>
-          </section>
-
-          <section>
             But what if something needs to be nullable
 
             <pre><code data-trim class="rust">
