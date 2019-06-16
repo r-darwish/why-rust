@@ -467,7 +467,7 @@ def thread_function():
           </section>
 
           <section>
-            <pre><code data-trim class="rust">
+            <pre><code data-trim class="rust" data-line-numbers="2,6-7">
 let mut threads = vec![];
 let mut counter = 0;
 
@@ -500,7 +500,7 @@ error[E0499]: cannot borrow `counter` as mutable more than once at a time
 
           <section>
             Rust has atomic types
-            <pre><code data-trim class="rust">
+            <pre><code data-trim class="rust" data-line-numbers="2,8-9">
 let mut threads = vec![];
 let counter = Arc::new(AtomicU32::new(0));
 
@@ -517,7 +517,7 @@ for _ in 0..NTHREADS {
 
           <section>
             And a mutex
-            <pre><code data-trim class="rust">
+            <pre><code data-trim class="rust" data-line-numbers="4,11-13">
 let mut threads = vec![];
 
 let message_mutex = Arc::new(
@@ -607,7 +607,7 @@ numbers.retain(|num| *num >= 4);
             <li class="fragment">No garbage collector and no resource leaking</li>
             <li class="fragment">No race conditions and no magical giant lock</li>
             <li class="fragment">A complete toolchain supported in Linux, Windows and macOS</li>
-            <li class="fragment">Lots of other cool features that I did not have time to speak about</li>
+            <li class="fragment">Lots of other cool features that I did not have time to talk about</li>
           </ul>
 
           <aside class="notes">
