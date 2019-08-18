@@ -46,6 +46,30 @@
         </section>
         <section>
           <section>
+            <h2>Let's talk about enums</h2>
+            <small>(More like safe unions)</small>
+            <pre><code data-trim class="rust" style="line-height: 1.0em">
+enum Location {
+    Address(String),
+    Coordinates(f32, f32)
+}
+
+fn main() {
+    let bt = Location::Coordinates(25.0000093, -71.0043774);
+    match bt {
+        Location::Address(address) => {
+            println!("Address: {}", address);
+        },
+        Location::Coordinates(lon, lat) => {
+            println!("lon: {}, lat: {}", lon, lat);
+        },
+    }
+}
+            </code></pre>
+          </section>
+        </section>
+        <section>
+          <section>
             <h3>Rust is type safe</h3>
 
             Python
