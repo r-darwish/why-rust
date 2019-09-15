@@ -46,10 +46,13 @@
         </section>
         <section>
           <section>
-            <h2>Let's talk about enums</h2>
-            <small>(More like safe unions)</small>
-            <pre><code data-trim class="rust" style="line-height: 1.0em">
+            <h2>Let's talk about some key elements</h2>
+          </section>
+          <section>
+            <h2>Enums</h2>
+            <pre><code data-trim class="rust" style="font-size: 0.8em; line-height: normal">
 enum Location {
+    Unknown,
     Address(String),
     Coordinates(f32, f32)
 }
@@ -57,6 +60,7 @@ enum Location {
 fn main() {
     let bt = Location::Coordinates(25.0000093, -71.0043774);
     match bt {
+        Location::Unknown => { println!("Unknown"); }
         Location::Address(address) => {
             println!("Address: {}", address);
         },
@@ -66,6 +70,67 @@ fn main() {
     }
 }
             </code></pre>
+          </section>
+          <section>
+            <h2>3 ways to pass parameters</h2>
+          </section>
+          <section>
+            <h2>By value</h2>
+            <pre><code data-trim class="rust">
+fn set_mark(mut weapon: String, mark: u32) {
+    weapon.push_str(&format!(" Mark {}", mark));
+    println!("{}", weapon); // Super Cannon Mark 3
+}
+
+fn main() {
+    let weapon = String::from("Super Cannon");
+    set_mark(weapon.clone(), 3);
+    println!("{}", weapon) // Super Cannon
+}
+            </code></pre>
+          </section>
+          <section>
+            <h2>By reference</h2>
+            <pre><code data-trim class="rust">
+fn set_mark(weapon: &mut String, mark: u32) {
+    weapon.push_str(&format!(" Mark {}", mark));
+    println!("{}", weapon); // Super Cannon Mark 4
+}
+
+fn main() {
+    let mut weapon = String::from("Super Cannon");
+    set_mark(&mut weapon, 4);
+    println!("{}", weapon) // Super Cannon Mark 4
+}
+            </code></pre>
+            <aside class="notes">
+              <ul>
+                <li>Wouldn't work without `mut`</li>
+              </ul>
+            </aside>
+          </section>
+          <section>
+            <h2>By ownership</h2>
+            <pre><code data-trim class="rust">
+fn set_mark(mut weapon: String, mark: u32) {
+    weapon.push_str(&format!(" Mark {}", mark));
+    println!("{}", weapon); // Super Cannon Mark 5
+}
+
+fn main() {
+    let weapon = String::from("Super Cannon");
+    set_mark(weapon, 5);
+
+    // error[E0382]: borrow of moved value: `weapon`
+    println!("{}", weapon)
+}
+            </code></pre>
+            <aside class="notes">
+              <ul>
+                <li>Same function as the first example</li>
+                <li>Integers always pass by value and that's not hard-coded</li>
+              </ul>
+            </aside>
           </section>
         </section>
         <section>
