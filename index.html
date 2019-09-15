@@ -203,15 +203,26 @@ pub fn create(path: &amp;Path) -&gt; Result&lt;File&gt;
               <li>No use of primitives for OS resources (Handle / File Descriptor)</li>
             </ul>
           </section>
-
-          <section>
-            But what if something needs to be nullable
-
+        </section>
+        <section>
+        <section>
+          <p>But what if something needs to be nullable?</p>
+          <span class="fragment">
+            <p>Remember Enums?</p>
             <pre><code data-trim class="rust">
+enum Option&lt;T&gt; {
+    Some(T),
+    None
+}
+            </code></pre>
+          </span>
+        </section>
+        <section>
+          <pre><code data-trim class="rust">
 fn welcome(maybe_name: Option&lt;&amp;str&gt;) {
     let mut real_name = &quot;John Doe&quot;;
 
-    if let Some(name) = maybe_name {
+    if let Option::Some(name) = maybe_name {
         real_name = name;
     }
 
@@ -219,28 +230,28 @@ fn welcome(maybe_name: Option&lt;&amp;str&gt;) {
 }
 
 fn main() {
-    welcome(Some(&quot;Darwish&quot;));
-    welcome(None);
+    welcome(Option::Some(&quot;Darwish&quot;));
+    welcome(Option::None);
 }
-            </code></pre>
+          </code></pre>
 
-            <aside class="notes">
-              Types are automatically inferred in Rust, like auto in C++. This isn't dynamic typing.
-            </aside>
-          </section>
+          <aside class="notes">
+            Types are automatically inferred in Rust, like auto in C++. This isn't dynamic typing.
+          </aside>
+        </section>
 
-          <section>
-            The Rust way
+        <section>
+          The Rust way
 
-            <pre><code data-trim class="rust">
+          <pre><code data-trim class="rust">
 fn welcome(maybe_name: Option&lt;&amp;str&gt;) {
     let real_name = maybe_name.unwrap_or(&quot;John Doe&quot;);
     println!(&quot;Welcome {}&quot;, real_name)
 }
 
 fn main() {
-    welcome(Some(&quot;Darwish&quot;));
-    welcome(None)
+    welcome(Option::Some(&quot;Darwish&quot;));
+    welcome(Option::None)
 }
             </code></pre>
           </section>
@@ -251,7 +262,7 @@ fn main() {
             <pre><code data-trim class="rust">
 pub fn find(&amp;self, pat: &amp;Pattern) -&gt; Option&lt;usize&gt;
 
-pub fn create(path: &amp;Path) -&gt; Result&lt;File&gt;
+pub fn create(path: &amp;Path) -&gt; Result&lt;File, std::io::Error&gt;
             </code></pre>
 
             <aside class="notes">
@@ -260,11 +271,20 @@ pub fn create(path: &amp;Path) -&gt; Result&lt;File&gt;
                 <li>No modern language uses magic for files, but every language I checked use -1 for string finding.</li>
               </ul>
             </aside>
-
           </section>
 
           <section>
-            Result isn't a tuple like in Go
+            <p>Result it like Option, but with an associated error</p>
+            <pre><code data-trim class="rust">
+enum Result&lt;T, E&gt; {
+    Ok(T),
+    Err(E)
+}
+            </code></pre>
+          </span>
+          </section>
+          <section>
+            It isn't a tuple like in Go
 
             <pre><code data-trim class="go">
 file, err := os.Open("file.go") // For read access.
@@ -279,13 +299,11 @@ count, err := file.Read(data)
 
             <pre><code data-trim class="Rust">
 match File::create("name") {
-    // If it contains an actual file, we'll call it f
-    Ok(mut f) => {
+    Result::Ok(mut f) => {
         f.write(b"Hello");
     }
 
-    // If it contains an error, we'll call it e
-    Err(e) => {
+    Result::Err(e) => {
         println!("Error: {}", e);
     },
 }
